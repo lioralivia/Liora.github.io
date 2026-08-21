@@ -299,6 +299,8 @@
   .portrait{
     width: 100%;
     height: 100%;
+    object-fit: cover;
+    object-position: center top;
     display:block;
     transition: opacity 0.25s ease;
   }
@@ -507,7 +509,7 @@
     <div class="polaroid">
       <div class="tape"></div>
       <div class="frame">
-        <svg id="portrait" class="portrait" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg"></svg>
+        <img id="portrait" class="portrait" src="https://wwd.com/wp-content/uploads/2023/07/PANTHERE-FIG-MEN_4x5_300DPI.jpg" alt="Kim Taehyung">
       </div>
       <div class="caption" id="caption">exhibit no. 1</div>
     </div>
@@ -537,7 +539,7 @@
     </div>
   </div>
 
-  <div class="ticker"><span>welcome to the archive · scroll for more · thanks for stopping by · come back soon · &nbsp;</span></div>
+  <div class="ticker"><span>welcome to the archive · thanks for stopping by · come back soon · &nbsp;</span></div>
 
   <footer>
     <div class="filmstrip"><div></div><div></div><div></div><div></div><div></div></div>
@@ -547,49 +549,32 @@
 </div>
 
 <script>
-  // A small set of hand-drawn, illustrated "portrait" placeholders,
-  // built from vintage-toned shapes rather than real photographs.
-  // Swap these SVGs for your own <img> photos if you have rights to use them.
-  const palettes = [
-    { bg: "#e6d7b8", face: "#c9a879", hair: "#241a13", shirt: "#a8342a" },
-    { bg: "#d9c3a0", face: "#b98f63", hair: "#3a2c20", shirt: "#6b4226" },
-    { bg: "#efe0c2", face: "#d1ac7d", hair: "#1c1712", shirt: "#8c4a3a" },
-    { bg: "#e2cfae", face: "#c39e70", hair: "#2b2018", shirt: "#a8342a" }
+  const photos = [
+    "https://wwd.com/wp-content/uploads/2023/07/PANTHERE-FIG-MEN_4x5_300DPI.jpg",
+    "https://i.pinimg.com/736x/09/c8/6c/09c86ce261f8bd9b86bbd15345aa830e.jpg",
+    "https://i.pinimg.com/736x/35/c0/03/35c0032e30fdc27bb62cd34e9f8b6835.jpg",
+    "https://i.pinimg.com/736x/1a/cb/b1/1acbb197b98ce7c9ffe7ef3560a8db4e.jpg"
   ];
   const captions = [
-    "exhibit no. 1 — studio, 1995",
-    "exhibit no. 2 — polaroid, backstage",
-    "exhibit no. 3 — self portrait sketch",
-    "exhibit no. 4 — on set, evening light"
+    "exhibit no. 1",
+    "exhibit no. 2",
+    "exhibit no. 3",
+    "exhibit no. 4"
   ];
 
-  function drawPortrait(svg, p){
-    svg.innerHTML = `
-      <rect width="240" height="240" fill="${p.bg}"/>
-      <circle cx="120" cy="150" r="70" fill="${p.shirt}"/>
-      <circle cx="120" cy="105" r="46" fill="${p.face}"/>
-      <path d="M74 95 Q120 40 166 95 Q166 70 120 62 Q74 70 74 95 Z" fill="${p.hair}"/>
-      <circle cx="102" cy="108" r="4" fill="${p.hair}"/>
-      <circle cx="138" cy="108" r="4" fill="${p.hair}"/>
-      <path d="M104 128 Q120 138 136 128" stroke="${p.hair}" stroke-width="3" fill="none" stroke-linecap="round"/>
-      <rect x="0" y="0" width="240" height="240" fill="none" stroke="${p.hair}" stroke-opacity="0.08" stroke-width="10"/>
-    `;
-  }
-
-  const svgEl = document.getElementById('portrait');
+  const imgEl = document.getElementById('portrait');
   const captionEl = document.getElementById('caption');
   let current = 0;
-  drawPortrait(svgEl, palettes[0]);
 
   document.getElementById('shuffleBtn').addEventListener('click', () => {
-    svgEl.classList.add('fade');
+    imgEl.classList.add('fade');
     setTimeout(() => {
-      let next = Math.floor(Math.random() * palettes.length);
-      if (next === current) next = (next + 1) % palettes.length;
+      let next = Math.floor(Math.random() * photos.length);
+      if (next === current) next = (next + 1) % photos.length;
       current = next;
-      drawPortrait(svgEl, palettes[current]);
+      imgEl.src = photos[current];
       captionEl.textContent = captions[current];
-      svgEl.classList.remove('fade');
+      imgEl.classList.remove('fade');
     }, 250);
   });
 </script>
