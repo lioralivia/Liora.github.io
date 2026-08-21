@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V Archive — Kim Taehyung Fan Page</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #f1e6cf;
+    --paper-dark: #e6d7b8;
+    --ink: #241a13;
+    --coffee: #6b4226;
+    --rust: #a8342a;
+    --cream: #fbf3e3;
+    --shadow: rgba(36,26,19,0.35);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0;
+    padding:0;
+    background:
+      radial-gradient(ellipse 340px 220px at 8% 12%, rgba(107,66,38,0.10), transparent 60%),
+      radial-gradient(ellipse 280px 200px at 92% 30%, rgba(168,52,42,0.07), transparent 60%),
+      radial-gradient(ellipse 300px 240px at 15% 82%, rgba(107,66,38,0.09), transparent 60%),
+      radial-gradient(ellipse 260px 200px at 88% 88%, rgba(36,26,19,0.06), transparent 60%),
+      radial-gradient(ellipse 220px 180px at 55% 45%, rgba(107,66,38,0.05), transparent 60%),
+      var(--paper);
+    color: var(--ink);
+    font-family: 'Courier Prime', monospace;
+    overflow-x: hidden;
+  }
+
+  /* film grain overlay, constant subtle flicker */
+  body::before{
+    content:"";
+    position: fixed;
+    inset:0;
+    pointer-events:none;
+    z-index: 50;
+    background-image:
+      radial-gradient(rgba(36,26,19,0.05) 1px, transparent 1px);
+    background-size: 3px 3px;
+    opacity: 0.5;
+    animation: grain 1s steps(4) infinite;
+  }
+  @keyframes grain{
+    0%{ transform: translate(0,0); }
+    25%{ transform: translate(-1%,1%); }
+    50%{ transform: translate(1%,-1%); }
+    75%{ transform: translate(-1%,-1%); }
+    100%{ transform: translate(0,0); }
+  }
+
+  .wrap{
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ---------- LARGER SCREENS: desk-spread layout ---------- */
+  /* Below ~900px the page stays single-column (the original layout).
+     From 900px up, it opens into a two-column "spread": a pinned photo
+     + stamp on the left, like a magazine sidebar, with the bio and facts
+     laid out beside it on the right, so the wider canvas gets used
+     instead of leaving empty margins either side of a narrow column. */
+  @media (min-width: 900px){
+    .shutter-btn{ align-self: center; }
+
+    .wrap{
+      max-width: 1080px;
+      padding: 48px 48px 70px;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      column-gap: 56px;
+      row-gap: 10px;
+      grid-template-areas:
+        "header header"
+        "photo  main"
+        "ticker ticker"
+        "footer footer";
+      align-items: start;
+    }
+
+    header{ grid-area: header; padding-bottom: 36px; }
+
+    .photo-stage{
+      grid-area: photo;
+      position: sticky;
+      top: 40px;
+      align-items: stretch;
+    }
+
+    .main-content{ grid-area: main; padding-top: 6px; }
+
+    .ticker{ grid-area: ticker; margin-top: 10px; }
+    footer{ grid-area: footer; }
+
+    .facts-grid{ grid-template-columns: 1fr 1fr 1fr; }
+
+    .polaroid{ width: 100%; }
+    .frame{ width: 100%; height: auto; aspect-ratio: 1 / 1; }
+  }
+
+  @media (min-width: 1200px){
+    .wrap{ max-width: 1180px; column-gap: 72px; }
+  }
+
+  /* ---------- SCATTERED PAPER SCRAPS ---------- */
+  .scatter-layer{
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .scrap{
+    position: absolute;
+    background: var(--cream);
+    box-shadow: 0 4px 10px var(--shadow);
+    opacity: 0.55;
+    animation: driftScrap 7s ease-in-out infinite;
+  }
+
+  .scrap.torn{
+    clip-path: polygon(
+      0% 6%, 8% 0%, 22% 4%, 34% 0%, 48% 5%, 60% 0%, 74% 4%, 88% 0%, 100% 5%,
+      100% 92%, 90% 100%, 76% 95%, 64% 100%, 50% 96%, 38% 100%, 24% 95%, 10% 100%, 0% 94%
+    );
+    border: 1px solid rgba(36,26,19,0.08);
+  }
+
+  .scrap.tape-scrap{
+    background: rgba(251,243,227,0.6);
+    border: 1px solid rgba(36,26,19,0.12);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.12);
+  }
+
+  .scrap.ring{
+    background: transparent;
+    border: 2px dashed rgba(168,52,42,0.35);
+    border-radius: 50%;
+    box-shadow: none;
+  }
+
+  .scrap.dot{
+    background: var(--coffee);
+    border-radius: 50%;
+    box-shadow: none;
+    opacity: 0.25;
+  }
+
+  @keyframes driftScrap{
+    0%,100%{ transform: translateY(0) rotate(var(--rot, 0deg)); }
+    50%{ transform: translateY(-8px) rotate(calc(var(--rot, 0deg) + 2deg)); }
+  }
+
+  .s1{ top: 6%;  left: 4%;  width: 46px; height: 60px; --rot: -14deg; transform: rotate(-14deg); animation-delay: 0s; }
+  .s2{ top: 18%; right: 5%; width: 38px; height: 50px; --rot: 10deg;  transform: rotate(10deg);  animation-delay: 1s; }
+  .s3{ top: 42%; left: 2%;  width: 30px; height: 12px; --rot: -8deg;  transform: rotate(-8deg);  animation-delay: 2s; }
+  .s4{ top: 58%; right: 3%; width: 54px; height: 68px; --rot: 8deg;   transform: rotate(8deg);   animation-delay: 0.6s; }
+  .s5{ top: 76%; left: 6%;  width: 34px; height: 46px; --rot: -6deg;  transform: rotate(-6deg);  animation-delay: 1.6s; }
+  .s6{ top: 88%; right: 8%; width: 26px; height: 10px; --rot: 12deg;  transform: rotate(12deg);  animation-delay: 2.4s; }
+  .s7{ top: 30%; left: 46%; width: 40px; height: 40px; --rot: 0deg; }
+  .s8{ top: 66%; left: 40%; width: 10px; height: 10px; }
+  .s9{ top: 10%; left: 34%; width: 6px;  height: 6px; }
+  .s10{ top: 80%; right: 30%; width: 8px; height: 8px; }
+
+  /* extra scraps to fill the wider margins that open up on laptop-size
+     screens once the desk-spread layout kicks in */
+  .s11, .s12, .s13, .s14{ display: none; }
+  @media (min-width: 900px){
+    .s11, .s12, .s13, .s14{ display: block; }
+    .s11{ top: 4%;  left: 22%; width: 24px; height: 30px; --rot: 16deg; transform: rotate(16deg); animation-delay: 1.2s; }
+    .s12{ top: 50%; left: 0.5%; width: 20px; height: 20px; --rot: -10deg; transform: rotate(-10deg); animation-delay: 2.6s; }
+    .s13{ top: 66%; right: 1%; width: 36px; height: 46px; --rot: -12deg; transform: rotate(-12deg); animation-delay: 0.3s; }
+    .s14{ top: 92%; left: 24%; width: 7px; height: 7px; animation-delay: 1.8s; }
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    text-align: center;
+    padding: 18px 10px 26px;
+    position: relative;
+  }
+
+  .eyebrow{
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--rust);
+    font-weight: 700;
+  }
+
+  h1.title{
+    font-family: 'Playfair Display', serif;
+    font-weight: 800;
+    font-size: clamp(38px, 10vw, 58px);
+    margin: 6px 0 2px;
+    color: var(--ink);
+    letter-spacing: 1px;
+    position: relative;
+    display: inline-block;
+  }
+
+  h1.title::after{
+    content:"";
+    position:absolute;
+    left: 4%; right: 4%;
+    bottom: 2px;
+    height: 10px;
+    background: var(--rust);
+    opacity: 0.25;
+    z-index: -1;
+    transform: skewX(-6deg);
+  }
+
+  .subtitle{
+    font-size: 12px;
+    color: var(--coffee);
+    letter-spacing: 0.5px;
+  }
+
+  .stamp{
+    position: absolute;
+    top: 10px;
+    right: 6px;
+    width: 66px;
+    height: 66px;
+    border: 2px dashed var(--rust);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--rust);
+    font-family: 'Playfair Display', serif;
+    font-weight: 800;
+    font-size: 22px;
+    transform: rotate(12deg);
+    animation: wobble 4s ease-in-out infinite;
+    background: var(--cream);
+  }
+  @keyframes wobble{
+    0%,100%{ transform: rotate(12deg); }
+    50%{ transform: rotate(6deg); }
+  }
+
+  /* ---------- POLAROID ---------- */
+  .photo-stage{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px 0 34px;
+    perspective: 1200px;
+  }
+
+  .polaroid{
+    background: var(--cream);
+    padding: 14px 14px 46px;
+    box-shadow: 0 14px 26px var(--shadow), 0 2px 0 rgba(255,255,255,0.5) inset;
+    transform: rotate(-3deg);
+    transition: transform 0.5s ease;
+    position: relative;
+    animation: floaty 5s ease-in-out infinite;
+  }
+  .polaroid:hover{ transform: rotate(0deg) scale(1.02); }
+
+  @keyframes floaty{
+    0%,100%{ transform: rotate(-3deg) translateY(0px); }
+    50%{ transform: rotate(-1.5deg) translateY(-6px); }
+  }
+
+  .tape{
+    position: absolute;
+    width: 60px;
+    height: 22px;
+    background: rgba(251,243,227,0.75);
+    border: 1px solid rgba(36,26,19,0.15);
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-4deg);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  }
+
+  .frame{
+    width: 240px;
+    height: 240px;
+    background: var(--paper-dark);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(36,26,19,0.15);
+  }
+
+  .portrait{
+    width: 100%;
+    height: 100%;
+    display:block;
+    transition: opacity 0.25s ease;
+  }
+  .portrait.fade{ opacity: 0; }
+
+  .caption{
+    text-align:center;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--coffee);
+    margin-top: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  .shutter-btn{
+    margin-top: 20px;
+    font-family: 'Courier Prime', monospace;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: var(--cream);
+    background: var(--rust);
+    border: none;
+    padding: 13px 26px;
+    border-radius: 3px;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #7a241c, 0 8px 14px var(--shadow);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    text-transform: uppercase;
+  }
+  .shutter-btn:hover{ transform: translateY(-1px); }
+  .shutter-btn:active{
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 #7a241c, 0 2px 6px var(--shadow);
+  }
+
+  /* ---------- SECTIONS ---------- */
+  .card{
+    background: var(--cream);
+    border: 1px solid rgba(36,26,19,0.12);
+    border-radius: 4px;
+    padding: 22px 22px;
+    margin-bottom: 22px;
+    box-shadow: 0 6px 14px var(--shadow);
+    position: relative;
+  }
+
+  .card::before{
+    content:"";
+    position:absolute;
+    top:0; left: 18px;
+    width: 3px; height: 100%;
+    background: repeating-linear-gradient(to bottom, var(--rust) 0 6px, transparent 6px 12px);
+    opacity: 0.5;
+  }
+
+  .card h2{
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    margin: 0 0 10px 16px;
+    color: var(--ink);
+  }
+
+  .card p{
+    margin: 0 0 0 16px;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: #3a2c20;
+  }
+
+  /* ---------- FACTS ---------- */
+  .facts-title{
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    text-align: center;
+    margin: 4px 0 16px;
+  }
+
+  .facts-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 26px;
+  }
+  @media (max-width: 480px){
+    .facts-grid{ grid-template-columns: 1fr; }
+  }
+
+  .ticket{
+    background: var(--cream);
+    border: 1px dashed var(--coffee);
+    border-radius: 6px;
+    padding: 14px 12px;
+    position: relative;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #3a2c20;
+    transition: transform 0.2s ease;
+  }
+  .ticket:hover{ transform: translateY(-4px) rotate(-1deg); }
+
+  .ticket .num{
+    display: inline-block;
+    font-family: 'Playfair Display', serif;
+    font-weight: 800;
+    color: var(--rust);
+    font-size: 22px;
+    margin-right: 6px;
+    line-height: 1;
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  .ticket:nth-child(2n) .num{ animation-delay: 0.6s; }
+  .ticket:nth-child(3n) .num{ animation-delay: 1.2s; }
+  @keyframes pulse{
+    0%,100%{ opacity: 1; }
+    50%{ opacity: 0.55; }
+  }
+
+  /* ---------- MARQUEE TICKER ---------- */
+  .ticker{
+    background: var(--ink);
+    color: var(--cream);
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 10px 0;
+    border-radius: 4px;
+    margin-bottom: 26px;
+  }
+  .ticker span{
+    display: inline-block;
+    padding-left: 100%;
+    animation: scroll 16s linear infinite;
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+  @keyframes scroll{
+    0%{ transform: translateX(0); }
+    100%{ transform: translateX(-100%); }
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    text-align:center;
+    font-size: 11px;
+    color: var(--coffee);
+    letter-spacing: 1.5px;
+    padding-top: 10px;
+    border-top: 2px dashed rgba(107,66,38,0.4);
+  }
+  .filmstrip{
+    display:flex;
+    justify-content:center;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .filmstrip div{
+    width: 10px; height: 14px;
+    background: var(--ink);
+    border-radius: 1px;
+    animation: blink 1.6s ease-in-out infinite;
+  }
+  .filmstrip div:nth-child(2){ animation-delay: 0.2s; }
+  .filmstrip div:nth-child(3){ animation-delay: 0.4s; }
+  .filmstrip div:nth-child(4){ animation-delay: 0.6s; }
+  .filmstrip div:nth-child(5){ animation-delay: 0.8s; }
+  @keyframes blink{
+    0%,100%{ opacity: 0.25; }
+    50%{ opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="scatter-layer">
+  <div class="scrap torn s1"></div>
+  <div class="scrap torn s2"></div>
+  <div class="scrap tape-scrap s3"></div>
+  <div class="scrap torn s4"></div>
+  <div class="scrap torn s5"></div>
+  <div class="scrap tape-scrap s6"></div>
+  <div class="scrap ring s7"></div>
+  <div class="scrap dot s8"></div>
+  <div class="scrap dot s9"></div>
+  <div class="scrap dot s10"></div>
+  <div class="scrap torn s11"></div>
+  <div class="scrap dot s12"></div>
+  <div class="scrap tape-scrap s13"></div>
+  <div class="scrap dot s14"></div>
+</div>
+
+<div class="wrap">
+
+  <header>
+    <div class="stamp">V</div>
+    <div class="eyebrow">EST. DEC 30 1995 · SEOUL</div>
+    <h1 class="title">Kim Taehyung</h1>
+    <div class="subtitle">— a small paper fan archive —</div>
+  </header>
+
+  <div class="photo-stage">
+    <div class="polaroid">
+      <div class="tape"></div>
+      <div class="frame">
+        <svg id="portrait" class="portrait" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+      <div class="caption" id="caption">exhibit no. 1</div>
+    </div>
+    <button class="shutter-btn" id="shuffleBtn">↻ New Photo</button>
+  </div>
+
+  <div class="main-content">
+    <div class="card">
+      <h2>About V</h2>
+      <p>
+        Kim Taehyung, known on stage as V, is a South Korean singer, songwriter, and member
+        of the boy band BTS. Since debuting in 2013, he's built a reputation for a deep,
+        husky voice, a painter's eye for style, and a habit of turning up wherever art,
+        fashion, and film collide. Off stage he's an avid photographer and self-taught
+        painter, often folding those interests straight into his music.
+      </p>
+    </div>
+
+    <div class="facts-title">fun facts</div>
+    <div class="facts-grid">
+      <div class="ticket"><span class="num">01</span>His stage name "V" stands for victory.</div>
+      <div class="ticket"><span class="num">02</span>He plays saxophone and taught himself piano.</div>
+      <div class="ticket"><span class="num">03</span>He's an avid film photographer, often shooting on vintage cameras.</div>
+      <div class="ticket"><span class="num">04</span>He voiced a character and worked on the soundtrack for the film "Seven Days."</div>
+      <div class="ticket"><span class="num">05</span>He named his rescue dog Yeontan, after Korean charcoal briquettes.</div>
+      <div class="ticket"><span class="num">06</span>He released his debut solo album, "Layover," in 2023.</div>
+    </div>
+  </div>
+
+  <div class="ticker"><span>welcome to the archive · scroll for more · thanks for stopping by · come back soon · &nbsp;</span></div>
+
+  <footer>
+    <div class="filmstrip"><div></div><div></div><div></div><div></div><div></div></div>
+    made with care, for the fans
+  </footer>
+
+</div>
+
+<script>
+  // A small set of hand-drawn, illustrated "portrait" placeholders,
+  // built from vintage-toned shapes rather than real photographs.
+  // Swap these SVGs for your own <img> photos if you have rights to use them.
+  const palettes = [
+    { bg: "#e6d7b8", face: "#c9a879", hair: "#241a13", shirt: "#a8342a" },
+    { bg: "#d9c3a0", face: "#b98f63", hair: "#3a2c20", shirt: "#6b4226" },
+    { bg: "#efe0c2", face: "#d1ac7d", hair: "#1c1712", shirt: "#8c4a3a" },
+    { bg: "#e2cfae", face: "#c39e70", hair: "#2b2018", shirt: "#a8342a" }
+  ];
+  const captions = [
+    "exhibit no. 1 — studio, 1995",
+    "exhibit no. 2 — polaroid, backstage",
+    "exhibit no. 3 — self portrait sketch",
+    "exhibit no. 4 — on set, evening light"
+  ];
+
+  function drawPortrait(svg, p){
+    svg.innerHTML = `
+      <rect width="240" height="240" fill="${p.bg}"/>
+      <circle cx="120" cy="150" r="70" fill="${p.shirt}"/>
+      <circle cx="120" cy="105" r="46" fill="${p.face}"/>
+      <path d="M74 95 Q120 40 166 95 Q166 70 120 62 Q74 70 74 95 Z" fill="${p.hair}"/>
+      <circle cx="102" cy="108" r="4" fill="${p.hair}"/>
+      <circle cx="138" cy="108" r="4" fill="${p.hair}"/>
+      <path d="M104 128 Q120 138 136 128" stroke="${p.hair}" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <rect x="0" y="0" width="240" height="240" fill="none" stroke="${p.hair}" stroke-opacity="0.08" stroke-width="10"/>
+    `;
+  }
+
+  const svgEl = document.getElementById('portrait');
+  const captionEl = document.getElementById('caption');
+  let current = 0;
+  drawPortrait(svgEl, palettes[0]);
+
+  document.getElementById('shuffleBtn').addEventListener('click', () => {
+    svgEl.classList.add('fade');
+    setTimeout(() => {
+      let next = Math.floor(Math.random() * palettes.length);
+      if (next === current) next = (next + 1) % palettes.length;
+      current = next;
+      drawPortrait(svgEl, palettes[current]);
+      captionEl.textContent = captions[current];
+      svgEl.classList.remove('fade');
+    }, 250);
+  });
+</script>
+
+</body>
+</html>
